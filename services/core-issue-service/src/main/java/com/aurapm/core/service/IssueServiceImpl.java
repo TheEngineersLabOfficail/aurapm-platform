@@ -54,12 +54,12 @@ public class IssueServiceImpl implements IssueService {
             if (analyticsResult != null) {
                 // Dynamically append the ML risk level directly into the ticket description summary
                 responseDTO.setDescription(responseDTO.getDescription() + 
-                    "\n\n[AI Delivery Insight] Spillover Risk: " + analyticsResult.get("risk_level") + 
+                    "\n\n[AI Enterprise Predictive Insight] Spillover Risk: " + analyticsResult.get("risk_level") + 
                     " (Probability: " + analyticsResult.get("spillover_probability") + ")");
             }
         } catch (Exception e) {
             // Fault Tolerance: If the analytics engine goes down, the core ticket engine must not crash!
-            responseDTO.setDescription(responseDTO.getDescription() + "\n\n[AI Delivery Insight] Analytics service temporarily offline.");
+            responseDTO.setDescription(responseDTO.getDescription() + "\n\n[AI Enterprise Predictive Insight] Analytics service temporarily offline.");
         }
 
         return responseDTO;
