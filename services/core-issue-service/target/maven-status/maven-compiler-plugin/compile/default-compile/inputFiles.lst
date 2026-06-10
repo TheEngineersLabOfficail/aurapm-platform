@@ -1,0 +1,10 @@
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/dto/IssueResponseDTO.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/entity/IssueStatus.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/dto/IssueRequestDTO.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/CoreIssueServiceApplication.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/config/DatabaseConfig.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/repository/IssueRepository.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/controller/IssueController.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/service/IssueServiceImpl.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/entity/Issue.java
+/Users/bikashsingh/Work/Enterprise/Projects/AuraPM/services/core-issue-service/src/main/java/com/aurapm/core/service/IssueService.java

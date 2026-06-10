@@ -1,0 +1,28 @@
+server:
+  port: 8081 # Running on 8081 so our future microservices don't conflict
+
+spring:
+  application:
+    name: core-issue-service
+  
+  datasource:
+    # The application looks for an environment variable named 'DB_HOST'. 
+    # If it is missing, it automatically falls back to 'localhost'.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/aurapm_core
+    username: ${DB_USER:aurapm_admin}
+    password: ${DB_PASSWORD:supersecretpassword}
+    driver-class-name: org.postgresql.Driver
+    # HikariCP Connection Pool Settings (Crucial for system performance)
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate # 'validate' ensures production code matches the database schema exactly without making accidental destructive modifications
+    show-sql: true
+    properties:
+      hibernate.format_sql: true

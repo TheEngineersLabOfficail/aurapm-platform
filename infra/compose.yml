@@ -1,0 +1,62 @@
+# Specifies the version of the Docker Compose file format. 
+#Version 3.8 is highly stable and supports modern networking/volume features.
+## version: '3.8'
+
+services: # This block begins the definition of the individual containers (services) we want to spin up.
+  # 1. The PostgreSQL Relational Database Engine
+  aurapm-db: #This is the internal name of our service inside this file. You can name it anything, but clarity is key.
+    image: postgres:16-alpine # Tells Docker which pre-built image to download from Docker Hub. 
+                              # '16' is the major version of PostgreSQL. 
+                              # 'alpine' means it's built on an incredibly lightweight Linux distribution (Alpine Linux), keeping the footprint tiny on your Mac. Docker automatically grabs the ARM64 version for your M5 chip.
+    container_name: aurapm_postgres # This explicitly names the running container. If you don't set this, Docker generates a random name. Specifying it makes it easier to run terminal commands against it later.
+    environment: # Injects "Environment Variables" into the container. PostgreSQL reads these specific variables upon startup to configure itself.
+      POSTGRES_USER: aurapm_admin # Sets the master username for the database.
+      POSTGRES_PASSWORD: supersecretpassword # Sets the password for that master user.
+      POSTGRES_DB: aurapm_core # Automatically creates a fresh database named 'aurapm_core' when the container boots up.
+    ports:
+      - "5432:5432" # Maps ports between your physical Mac and the virtual container using the format "HOST:CONTAINER". 
+                    # PostgreSQL inside the container naturally listens on port 5432. By mapping it to 5432 on your Mac, you can connect to this database using local tools (like PgAdmin or DBeaver) at `localhost:5432`.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # NEW: Maps our local initialization script into the container
+      - ./db_init:/docker-entrypoint-initdb.d
+    networks:
+      - aurapm-network # Assigns this container to a specific isolated virtual network. This ensures our future Java and Python microservices can talk to the database securely, while blocking outside noise.
+  
+  # 2. Our Freshly Containerized Java Microservice
+  core-issue-service:
+    build:
+      context: ../services/core-issue-service # Tells compose where to find the Dockerfile
+      dockerfile: Dockerfile
+    container_name: core_issue_service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=aurapm-db  # DNS resolution! Points directly to the database service name above
+      - DB_PORT=5432
+    depends_on:
+      - aurapm-db          # Guarantees the database starts before the Java app boots
+    networks:
+      - aurapm-network
+  # 3. Python Predictive Intelligence Microservice (NEW)
+  predictive-analytics:
+    build:
+      context: ../services/predictive-analytics
+      dockerfile: Dockerfile
+    container_name: predictive_analytics
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=/app/mlruns
+    volumes:
+      - mlflow_shared:/app/mlruns # Preserves MLflow experiment history charts on your disk
+    networks:
+      - aurapm-network
+
+volumes: # This section explicitly declares the persistent storage volumes used above.
+  postgres_data: # Tells Docker Compose to create and manage the lifecycle of this volume.
+  mlflow_shared: # Persists MLflow experiment data for the predictive analytics service.
+
+networks: # This section explicitly declares the isolated networks used above.
+  aurapm-network:
+    driver: bridge # 'bridge' is the standard network driver type. It creates a private internal network on your host machine so containers attached to it can communicate with each other using their service names (e.g., the Java app can connect to the host `aurapm-db` instead of an IP address).
