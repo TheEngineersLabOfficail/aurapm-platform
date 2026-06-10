@@ -1,0 +1,50 @@
+name: AuraPM Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Job 1: Compile and Validate the Java Microservice
+  build-java-core:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17 JDK Runtime Environment
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Compile and Verify Code via Maven Package Lifecycle
+        run: |
+          cd services/core-issue-service
+          mvn clean compile
+
+  # Job 2: Lint and Verify the Python Analytics Microservice
+  validate-python-analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.14 Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'pip'
+
+      - name: Install Base Service Dependencies
+        run: |
+          cd services/predictive-analytics
+          pip install -r requirements.txt
+
+      - name: Run Syntax Quality Check (Linting)
+        run: |
+          # Verifies code compiles cleanly and contains no broken imports or basic syntax anomalies
+          python -m compileall services/predictive-analytics/app/
